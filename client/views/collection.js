@@ -139,9 +139,15 @@ Template.Collection.helpers({
 });
 
 Template.Collection.events({
-    'input aside input[type="search"]': function(event, template) {
+    'submit form': function(event, template) {
+        return false;
+    },
+    'input input[type="search"]': function(event, template) {
         var self = template;
         Session.set('search', event.target.value);
+    },
+    'focus input[type="search"]': function(event, template) {
+        self.$(event.target).select();
     },
     'change table thead tr th input[type="checkbox"]': function(event, template) {
         var self = template;
@@ -165,7 +171,9 @@ Template.Collection.events({
     },
     'dblclick table tbody tr': function(event, template) {
         var self = template;
-        self.load(this, event.shiftKey);
+        if(!self.$(event.target).is('input[type="checkbox"]')) {
+            self.load(this, event.shiftKey);
+        }
     },
     'keydown table tbody': function(event, template) {
         var self = template;
