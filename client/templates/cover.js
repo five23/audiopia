@@ -3,7 +3,7 @@ Template.Cover.created = function() {
     self.artist = new ReactiveVar();
     self.album = new ReactiveVar();
     self.coverUrl = new ReactiveVar();
-    Tracker.autorun(function() {
+    self.autorun(function() {
         var song = Session.get('currentSong');
         if(!song) {
             self.coverUrl.set('/static/img/cover.png');
@@ -34,15 +34,15 @@ Template.Cover.created = function() {
 }
 
 Template.Cover.helpers({
-    artist: function() {
+    'artist': function() {
         var self = Template.instance();
         return self.artist.get();
     },
-    album: function() {
+    'album': function() {
         var self = Template.instance();
         return self.album.get();
     },
-    coverUrl: function() {
+    'coverUrl': function() {
         var self = Template.instance();
         return self.coverUrl.get();
     }

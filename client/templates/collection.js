@@ -103,6 +103,10 @@ Template.Collection.rendered = function() {
 }
 
 Template.Collection.helpers({
+    'local': function() {
+        var self = Template.instance();
+        return this.collection == MusicManager.localCollection;
+    },
     'model': function() {
         var self = Template.instance();
         return this.collection.find(self.searchQuery(), { fields: this.fields, sort: this.sort });
@@ -110,9 +114,11 @@ Template.Collection.helpers({
     'rowAttributes': function() {
         var self = Template.instance();
         var attributes = {};
+        /*
         if(!AudioPlayer.canPlay(this)) {
             _.extend(attributes, { disabled: 'disabled' });
         }
+        */
         if(_.isEqual(self._selected.get(), this)) {
             _.extend(attributes, { selected: 'selected' });
         }
@@ -139,6 +145,23 @@ Template.Collection.helpers({
 });
 
 Template.Collection.events({
+    'click button#download': function(event, template) {
+        var self = template;
+        self.$('td input[type="checkbox"]:checked').each(function() {
+            var song = Blaze.getData(this);
+            if(!MusicManager.localCollection.findOne({ _id: song._id })) {
+                MusicManager.downloads.push(song);
+            } else {
+                var event = document.createEvent('MouseEvents');
+                event.initEvent('click', true, true);
+                var link = document.createElement('a');
+                link.href = song.url;
+                link.download = '{track} {title}.{extension}'.format(song);
+                link.setAttribute('target','_blank');
+                link.dispatchEvent(event);
+            }
+        });
+    },
     'submit form': function(event, template) {
         return false;
     },
@@ -155,15 +178,17 @@ Template.Collection.events({
         self.$('td input[type="checkbox"]').each(function() {
             self.$(this).prop('checked', checked);
         });
+        self.$('aside .uk-button-group button').prop('disabled', !checked);
     },
     'change table tbody tr td input[type="checkbox"]': function(event, template) {
         var self = template;
-        var allChecked = true;
+        var checked = false;
         self.$('td input[type="checkbox"]').each(function() {
-            allChecked = self.$(this).prop('checked');
-            return allChecked;
+            checked = self.$(this).prop('checked');
+            return checked;
         });
-        self.$('th input[type="checkbox"]').prop('checked', allChecked);
+        self.$('th input[type="checkbox"]').prop('checked', checked);
+        self.$('aside .uk-button-group button').prop('disabled', !self.$('td input[type="checkbox"]:checked').length);
     },
     'click table tbody tr': function(event, template) {
         var self = template;

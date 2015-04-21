@@ -3,12 +3,13 @@
         <aside>
             <ul class="uk-tab uk-float-left" data-uk-tab="{connect:'.uk-switcher'}">
                 <li class="uk-active"><a href="#">Overview</a></li>
+                <li><a href="#">Downloads <div class="uk-badge">{{downloads.length}}</div></a></li>
             </ul>
             <div class="uk-text-right">
                 <div class="uk-button-group">
                 {{#unless currentImport }}
                     <div id="import" class="uk-form-file">
-                        <button class="uk-button"><i class="uk-icon-check"></i>&nbsp;&nbsp;Import</button>
+                        <button class="uk-button"><i class="uk-icon-arrow-up"></i>&nbsp;&nbsp;Import</button>
                         <input type="file" multiple accept="audio/*" webkitdirectory>
                     </div>
                 {{else}}
@@ -20,7 +21,26 @@
             </div>
         </aside>
         <ul class="uk-switcher">
-            <li>Not implemented yet.</li>
+            <li class="uk-active">
+                <canvas id="chart" height="50"></canvas>
+            </li>
+            <li>
+                {{#if downloads}}
+                <table class="uk-table">
+                    <tbody>
+                        {{#each downloads}}
+                        <tr>
+                            <td>{{title}}</td>
+                            <td>{{artist}}</td>
+                            <td class="uk-hidden-small">{{album}}</td>
+                        </tr>
+                        {{/each}}
+                    </tbody>
+                </table>
+                {{else}}
+                No running download tasks
+                {{/if}}
+            </li>
         </ul>
     </section>
 </template>

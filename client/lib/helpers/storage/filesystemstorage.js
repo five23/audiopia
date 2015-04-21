@@ -1,19 +1,25 @@
-FilesystemStorage = function() {
+FilesystemStorage = function(successCallback, errorCallback) {
     var self = this;
     if(!window.webkitRequestFileSystem) {
-        throw new Error('Your browser does not support the Filesystem API.');
-    }
-    navigator.webkitPersistentStorage.requestQuota(2*1024*1024*1024 /* 2GB */, function(grantedBytes) {
-        window.webkitRequestFileSystem(window.PERSISTENT, grantedBytes, function(filesystem) {
-            self.root = filesystem.root;
+        setTimeout(function() {
+            errorCallback(new Error('Your browser does not support the Filesystem API.'));
+        }, 100);
+    } else {
+        navigator.webkitPersistentStorage.requestQuota(2*1024*1024*1024 /* 2GB */, function(grantedBytes) {
+            window.webkitRequestFileSystem(window.PERSISTENT, grantedBytes, function(filesystem) {
+                self.root = filesystem.root;
+                successCallback();
+            }, errorCallback);
         });
-    });
+    }
 }
 
 FilesystemStorage.prototype.readFile = function(filePath, successCallback, errorCallback) {
     var self = this;
     self.root.getFile(filePath, {}, function(fileEntry) {
-        successCallback(fileEntry);
+        if(successCallback) {
+            successCallback(fileEntry);
+        }
     }, errorCallback);
 }
 
@@ -27,7 +33,7 @@ FilesystemStorage.prototype.createPath = function(path, successCallback, errorCa
         root.getDirectory(folders[0], {create: true}, function(dirEntry) {
             if(folders.length) {
                 createDir(dirEntry, folders.slice(1));
-            } else {
+            } else if(successCallback) {
                 successCallback(dirEntry);
             }
         }, errorCallback);
@@ -43,7 +49,9 @@ FilesystemStorage.prototype.writeFile = function(filePath, blob, successCallback
     self.root.getFile(filePath, {create: true, exclusive: true}, function(fileEntry) {
         fileEntry.createWriter(function(fileWriter) {
             fileWriter.onwriteend = function(event) {
-                successCallback(fileEntry.toURL());
+                if(successCallback) {
+                    successCallback(fileEntry.toURL());
+                }
             };
             fileWriter.write(blob);
         }, errorCallback);
