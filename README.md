@@ -1,6 +1,9 @@
 Audiopia
 ========
 
+![Cover image](http://i.imgur.com/QQMyZy5.jpg)
+
+
 [Audiopia][] is a peer-to-peer music streaming platform built with modern Web Standards technologies (such as [WebSockets][] and [WebRTC][]) and APIs ([MediaSource API][], [Web Audio API][]).
 
 No online storage
@@ -25,7 +28,7 @@ Start your browser, type the URL and you are ready to go.
 No registration required
 ------------------------
 
-You don't have to register to use Audiopia. Go to [audiopia.io][Audiopia] and start listening to the music you love.
+You don't have to register to use Audiopia. Go to [audiopia.io](https://audiopia.io) and start listening to the music you love.
 
 In fact, Audiopia is fully anonymous, our service is about music, not users.  
 __Note:__ We do not collect or store any user specific information.
